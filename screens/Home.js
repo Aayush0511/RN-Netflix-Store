@@ -59,7 +59,7 @@ const Home = ({navigation}) => {
 
   if (loading) {
     return (
-      <Center style={styles.container}>
+      <Center style={styles.emptyContainer}>
         <Spinner color="#00B7C2" />
       </Center>
     );

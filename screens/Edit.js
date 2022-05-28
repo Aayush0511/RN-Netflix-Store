@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Button, FormControl, Heading, Input, View } from "native-base";
 import { Text, StyleSheet, ScrollView } from "react-native";
 import Snackbar from 'react-native-snackbar';
+import { isNumRegEx } from "./Add";
 
 const Edit = ({ navigation, route }) => {
   const [name, setName] = useState('');
@@ -22,6 +23,12 @@ const Edit = ({ navigation, route }) => {
       if (!name || !totalNoSeason) {
         return Snackbar.show({
           text: "Please add both fields",
+          backgroundColor: '#F00',
+          textColor: '#FFF',
+        });
+      } else if (!isNumRegEx.test(totalNoSeason)) {
+        return Snackbar.show({
+          text: "Number of seasons should a numeric value",
           backgroundColor: '#F00',
           textColor: '#FFF',
         });

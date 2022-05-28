@@ -11,6 +11,8 @@ import shortid from 'shortid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Snackbar from 'react-native-snackbar';
 
+export const isNumRegEx = /^[0-9]+$/;
+
 const Add = ({ navigation, route }) => {
   const [name, setName] = useState('');
   const [totalNoSeason, setTotalNoSeason] = useState('');
@@ -20,6 +22,12 @@ const Add = ({ navigation, route }) => {
       if (!name || !totalNoSeason) {
         return Snackbar.show({
           text: "Please add both fields",
+          backgroundColor: '#F00',
+          textColor: '#FFF',
+        });
+      } else if (!isNumRegEx.test(totalNoSeason)) {
+        return Snackbar.show({
+          text: "Number of seasons should a numeric value",
           backgroundColor: '#F00',
           textColor: '#FFF',
         });
