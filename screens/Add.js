@@ -66,7 +66,7 @@ const Add = ({ navigation, route }) => {
             borderWidth={2}
             variant="underlined"
             p={2}
-            placeholder="Username"
+            placeholder="Name of the show"
             value={name}
             onChangeText={text => setName(text)}
           />

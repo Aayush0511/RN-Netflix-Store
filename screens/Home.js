@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, LogBox } from "react-native";
 import { Fab, Icon, Button, Checkbox, Heading, HStack, View, ScrollView, VStack, Spinner } from "native-base";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -11,6 +11,7 @@ const Home = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    LogBox.ignoreLogs(['Warning:']);
     getList();
   }, [isFocused]);
 
@@ -27,7 +28,7 @@ const Home = ({ navigation }) => {
   };
 
   const deleteSeason = async (id) => {
-    const newList = listOfSeasons.filter((show) => show?.id === id);
+    const newList = listOfSeasons.filter((show) => show?.id != id);
     await AsyncStorage.setItem('@season_list', JSON.stringify(newList));
     setListOfSeasons(newList);
   };
@@ -40,7 +41,7 @@ const Home = ({ navigation }) => {
       return show;
     });
     await AsyncStorage.setItem('@season_list', JSON.stringify(newArr));
-    setListOfSeasons(newList);
+    setListOfSeasons(newArr);
   };
 
   if(loading) {
@@ -62,17 +63,21 @@ const Home = ({ navigation }) => {
           <Heading style={styles.heading} size="md">List of seasons</Heading>
           {listOfSeasons.map((item) => (
             <HStack mr={2} space={2} key={item.id} justifyContent="center" alignItems="center" style={styles.listItem}>
-              <Button style={styles.actionButton} colorScheme="danger">
+              <Button style={styles.actionButton} colorScheme="danger" onPress={() => {
+                deleteSeason(item.id);
+              }}>
                 <Icon name="trash" size={7} as={Ionicons} active color="white" />
               </Button>
-              <Button style={styles.actionButton} colorScheme="blue">
+              <Button style={styles.actionButton} colorScheme="blue" onPress={() => {
+                navigation.navigate("Edit", {item});
+              }}>
                 <Icon name="create" size={7} as={Ionicons} active color="white" />
               </Button>
               <VStack flex={1} justifyContent="center" alignItems="center">
                 <Heading size="sm" style={styles.seasonName}>{item.name}</Heading>
-                <Heading size="xs">{item.totalNoSeason} seasons</Heading>
+                <Heading size="xs" style={styles.seasonNumber}>{item.totalNoSeason} seasons</Heading>
               </VStack>
-              <Checkbox defaultIsChecked accessibilityLabel="This is a checkbox" />
+              <Checkbox accessibilityLabel="This is a checkbox" _checked={item.isWatched} onChange={() => markComplete(item.id)}/>
             </HStack>
           ))}
         </View>
@@ -86,18 +91,18 @@ export default Home;
 
 const styles = StyleSheet.create({
   emptyContainer: {
-    backgroundColor: '#1b262c',
+    backgroundColor: '#1B262C',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   container: {
-    backgroundColor: '#1b262c',
+    backgroundColor: '#1B262C',
     flex: 1,
   },
   heading: {
     textAlign: 'center',
-    color: '#00b7c2',
+    color: '#00B7C2',
     marginVertical: 15,
     marginHorizontal: 5,
   },
@@ -105,7 +110,11 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   seasonName: {
-    color: '#fdcb9e',
+    color: '#FDCB9E',
+    textAlign: 'justify',
+  },
+  seasonNumber: {
+    color: '#5067FF',
     textAlign: 'justify',
   },
   listItem: {
