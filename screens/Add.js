@@ -6,7 +6,6 @@ import {
   Button,
   Heading,
   View,
-  NumberInput,
 } from 'native-base';
 import shortid from 'shortid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -54,7 +53,7 @@ const Add = ({ navigation, route }) => {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={{flexGrow: 1}}>
         <Heading style={styles.heading} size="lg">
-          Add to watchlist
+          Add To Watchlist
         </Heading>
         <FormControl>
           <Input

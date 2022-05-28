@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, LogBox } from "react-native";
-import { Fab, Icon, Button, Checkbox, Heading, HStack, View, ScrollView, VStack, Spinner } from "native-base";
+import { Fab, Icon, Button, Checkbox, Heading, HStack, View, ScrollView, VStack, Spinner, Center } from "native-base";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused } from '@react-navigation/native';
@@ -11,14 +11,14 @@ const Home = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    LogBox.ignoreLogs(['Warning:']);
+    LogBox.ignoreLogs(['Warning:', 'WARN']);
     getList();
   }, [isFocused]);
 
   const getList = async () => {
     setLoading(true);
     const storedValue = await AsyncStorage.getItem('@season_list');
-    if(!storedValue) {
+    if (!storedValue) {
       setListOfSeasons([]);
     } else {
       const list = JSON.parse(storedValue);
@@ -30,12 +30,12 @@ const Home = ({ navigation }) => {
   const deleteSeason = async (id) => {
     const newList = listOfSeasons.filter((show) => show?.id != id);
     await AsyncStorage.setItem('@season_list', JSON.stringify(newList));
-    setListOfSeasons(newList);
+    getList();
   };
 
   const markComplete = async (id) => {
     const newArr = listOfSeasons.map((show) => {
-      if(show.id === id) {
+      if (show.id === id) {
         show.isWatched = !show.isWatched;
       }
       return show;
@@ -44,11 +44,11 @@ const Home = ({ navigation }) => {
     setListOfSeasons(newArr);
   };
 
-  if(loading) {
-    return(
-      <View style={styles.container}>
-        <Spinner color="#00B7C2" />
-      </View>
+  if (loading) {
+    return (
+      <Center style={styles.container}>
+          <Spinner color="#00B7C2" />
+      </Center>
     )
   }
 
@@ -69,7 +69,7 @@ const Home = ({ navigation }) => {
                 <Icon name="trash" size={7} as={Ionicons} active color="white" />
               </Button>
               <Button style={styles.actionButton} colorScheme="blue" onPress={() => {
-                navigation.navigate("Edit", {item});
+                navigation.navigate("Edit", { item });
               }}>
                 <Icon name="create" size={7} as={Ionicons} active color="white" />
               </Button>
@@ -77,7 +77,7 @@ const Home = ({ navigation }) => {
                 <Heading size="sm" style={styles.seasonName}>{item.name}</Heading>
                 <Heading size="xs" style={styles.seasonNumber}>{item.totalNoSeason} seasons</Heading>
               </VStack>
-              <Checkbox accessibilityLabel="This is a checkbox" _checked={item.isWatched} onChange={() => markComplete(item.id)}/>
+              <Checkbox accessibilityLabel="This is a checkbox" isChecked={item.isWatched} _checked={item.isWatched} onChange={() => markComplete(item.id)} />
             </HStack>
           ))}
         </View>
