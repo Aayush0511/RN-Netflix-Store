@@ -26,9 +26,22 @@ const Home = ({ navigation }) => {
     setLoading(false);
   };
 
-  const deleteSeason = async () => {};
+  const deleteSeason = async (id) => {
+    const newList = listOfSeasons.filter((show) => show?.id === id);
+    await AsyncStorage.setItem('@season_list', JSON.stringify(newList));
+    setListOfSeasons(newList);
+  };
 
-  const markComplete = async () => {};
+  const markComplete = async (id) => {
+    const newArr = listOfSeasons.map((show) => {
+      if(show.id === id) {
+        show.isWatched = !show.isWatched;
+      }
+      return show;
+    });
+    await AsyncStorage.setItem('@season_list', JSON.stringify(newArr));
+    setListOfSeasons(newList);
+  };
 
   if(loading) {
     return(
