@@ -1,11 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, LogBox } from "react-native";
-import { Fab, Icon, Button, Checkbox, Heading, HStack, View, ScrollView, VStack, Spinner, Center } from "native-base";
-import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useIsFocused } from '@react-navigation/native';
+import React, {useState, useEffect} from 'react';
+import {StyleSheet, LogBox} from 'react-native';
+import {
+  Fab,
+  Icon,
+  Button,
+  Checkbox,
+  Heading,
+  HStack,
+  View,
+  VStack,
+  Spinner,
+  Center,
+  Image,
+  FlatList,
+} from 'native-base';
+import {Ionicons} from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useIsFocused} from '@react-navigation/native';
 
-const Home = ({ navigation }) => {
+const Home = ({navigation}) => {
   const isFocused = useIsFocused();
   const [listOfSeasons, setListOfSeasons] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -27,14 +40,14 @@ const Home = ({ navigation }) => {
     setLoading(false);
   };
 
-  const deleteSeason = async (id) => {
-    const newList = listOfSeasons.filter((show) => show?.id != id);
+  const deleteSeason = async id => {
+    const newList = listOfSeasons.filter(show => show?.id != id);
     await AsyncStorage.setItem('@season_list', JSON.stringify(newList));
     getList();
   };
 
-  const markComplete = async (id) => {
-    const newArr = listOfSeasons.map((show) => {
+  const markComplete = async id => {
+    const newArr = listOfSeasons.map(show => {
       if (show.id === id) {
         show.isWatched = !show.isWatched;
       }
@@ -47,43 +60,101 @@ const Home = ({ navigation }) => {
   if (loading) {
     return (
       <Center style={styles.container}>
-          <Spinner color="#00B7C2" />
+        <Spinner color="#00B7C2" />
       </Center>
-    )
+    );
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <>
       {listOfSeasons.length == 0 ? (
         <View style={styles.emptyContainer}>
-          <Heading style={styles.heading} size="md">Watchlist is empty! Please add a season</Heading>
+          <Heading style={styles.heading} size="md">
+            Watchlist is empty! Please add a season
+          </Heading>
         </View>
       ) : (
-        <View>
-          <Heading style={styles.heading} size="md">List of seasons</Heading>
-          {listOfSeasons.map((item) => (
-            <HStack mr={2} space={2} key={item.id} justifyContent="center" alignItems="center" style={styles.listItem}>
-              <Button style={styles.actionButton} colorScheme="danger" onPress={() => {
-                deleteSeason(item.id);
-              }}>
-                <Icon name="trash" size={7} as={Ionicons} active color="white" />
-              </Button>
-              <Button style={styles.actionButton} colorScheme="blue" onPress={() => {
-                navigation.navigate("Edit", { item });
-              }}>
-                <Icon name="create" size={7} as={Ionicons} active color="white" />
-              </Button>
-              <VStack flex={1} justifyContent="center" alignItems="center">
-                <Heading size="sm" style={styles.seasonName}>{item.name}</Heading>
-                <Heading size="xs" style={styles.seasonNumber}>{item.totalNoSeason} seasons</Heading>
-              </VStack>
-              <Checkbox accessibilityLabel="This is a checkbox" isChecked={item.isWatched} onChange={() => markComplete(item.id)} />
-            </HStack>
-          ))}
+        <View style={styles.container}>
+          <Heading style={styles.heading} size="md">
+            List of seasons
+          </Heading>
+          <FlatList
+            data={listOfSeasons}
+            renderItem={({item}) => {
+              return (
+                <HStack
+                  mr={2}
+                  space={2}
+                  key={item.id}
+                  justifyContent="center"
+                  alignItems="center"
+                  style={styles.listItem}>
+                  <Button
+                    style={styles.actionButton}
+                    colorScheme="danger"
+                    onPress={() => {
+                      deleteSeason(item.id);
+                    }}>
+                    <Icon
+                      name="trash"
+                      size={7}
+                      as={Ionicons}
+                      active
+                      color="white"
+                    />
+                  </Button>
+                  <Button
+                    style={styles.actionButton}
+                    colorScheme="blue"
+                    onPress={() => {
+                      navigation.navigate('Edit', {item});
+                    }}>
+                    <Icon
+                      name="create"
+                      size={7}
+                      as={Ionicons}
+                      active
+                      color="white"
+                    />
+                  </Button>
+                  <VStack flex={1} justifyContent="center" alignItems="center">
+                    <Heading size="sm" style={styles.seasonName}>
+                      {item.name}
+                    </Heading>
+                    <Heading size="xs" style={styles.seasonNumber}>
+                      {item.totalNoSeason} seasons
+                    </Heading>
+                  </VStack>
+                  <Checkbox
+                    accessibilityLabel="This is a checkbox"
+                    isChecked={item.isWatched}
+                    onChange={() => markComplete(item.id)}
+                  />
+                </HStack>
+              );
+            }}></FlatList>
+          <Center>
+            <Image
+              my={2}
+              source={{
+                uri: 'https://1000logos.net/wp-content/uploads/2017/05/Netflix-Logo-2006.png',
+              }}
+              alt="Netflix Logo"
+              size="lg"
+            />
+          </Center>
         </View>
       )}
-      <Fab renderInPortal={false} style={styles.fab} size={16} placement="bottom-right" icon={<Icon name="add" size={10} as={Ionicons} />} onPress={() => { navigation.navigate("Add") }}></Fab>
-    </ScrollView>
+      <Fab
+        renderInPortal={false}
+        style={styles.fab}
+        size={16}
+        placement="bottom-right"
+        icon={<Icon name="add" size={10} as={Ionicons} />}
+        onPress={() => {
+          navigation.navigate('Add');
+        }}></Fab>
+    </>
   );
 };
 
@@ -99,6 +170,8 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#1B262C',
     flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
   },
   heading: {
     textAlign: 'center',
@@ -122,6 +195,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   fab: {
-    backgroundColor: "#5067FF",
-  }
+    backgroundColor: '#5067FF',
+  },
+  showsList: {
+    position: 'relative',
+  },
 });
