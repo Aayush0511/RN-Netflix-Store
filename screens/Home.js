@@ -77,7 +77,7 @@ const Home = ({ navigation }) => {
                 <Heading size="sm" style={styles.seasonName}>{item.name}</Heading>
                 <Heading size="xs" style={styles.seasonNumber}>{item.totalNoSeason} seasons</Heading>
               </VStack>
-              <Checkbox accessibilityLabel="This is a checkbox" isChecked={item.isWatched} _checked={item.isWatched} onChange={() => markComplete(item.id)} />
+              <Checkbox accessibilityLabel="This is a checkbox" isChecked={item.isWatched} onChange={() => markComplete(item.id)} />
             </HStack>
           ))}
         </View>
